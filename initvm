@@ -1,0 +1,38 @@
+#!/bin/bash
+
+echo -n "Instance hostname:"
+read -r HOSTNAME
+
+echo -n "Instance user (ubuntu):"
+read -r USERNAME
+if [[ -z "$USERNAME" ]]
+then
+	USERNAME="ubuntu"
+fi
+
+echo -n "Key name (*):"
+read -r KEYNAME
+if [[ -z "$KEYNAME" ]]
+then
+	KEYNAME="*"
+fi
+
+echo -n "Instance SSH port (22):"
+read -r PORT
+if [[ -z "$PORT" ]]
+then
+	PORT="22"
+fi
+
+filecheck="if [[ -d \$1 ]]\nthen\n\tset recursive=\"-r \"\nelse\n\tset recursive=\"\"\nfi"
+
+printf "$USERNAME\n" > user.txt
+printf "$HOSTNAME\n" > host.txt
+printf "$PORT\n" > port.txt
+printf "#!/bin/bash\nKEYPATH=\"\$KEYNAME.pem\"\nUSERNAME=\$(head -n 1 user.txt)\nHOST=\$(head -n 1 host.txt)\nPORT=\$(head -n 1 port.txt)\nssh -p \$PORT -i \$KEYPATH \$USERNAME@\$HOST\n" > logon && chmod +x logon
+printf "#!/bin/bash\n$filecheck\nKEYPATH=\"\$KEYNAME.pem\"\nUSERNAME=\$(head -n 1 user.txt)\nHOST=\$(head -n 1 host.txt)\nPORT=\$(head -n 1 port.txt)\nscp -P \$PORT -i \$KEYPATH \$recursive~/\$1 \$USERNAME@\$HOST:~/\$2\n" > copyto && chmod +x copyto
+
+filecheck="if [[ -d \$2 ]]\nthen\n\tset recursive=\"-r \"\nelse\n\tset recursive=\"\"\nfi"
+
+printf "#!/bin/bash\n$filecheck\nKEYPATH=\"\$KEYNAME.pem\"\nUSERNAME=\$(head -n 1 user.txt)\nHOST=\$(head -n 1 host.txt)\nPORT=\$(head -n 1 port.txt)\nscp -P \$PORT -i \$KEYPATH \$recursive\$USERNAME@\$HOST:~/\$1 ~/\$2\n" > copyfrom && chmod +x copyfrom
+
