@@ -41,4 +41,4 @@ filecheck="if [[ -d \$2 ]]\nthen\n\trecursive=\"-r \"\nelse\n\trecursive=\"\"\nf
 printf "#!/bin/bash\n$filecheck\nKEYPATH=\"$KEYNAME.pem\"\nUSERNAME=\$(head -n 1 user.txt)\nHOST=\$(head -n 1 host.txt)\nPORT=\$(head -n 1 port.txt)\nscp -P \$PORT -i \$KEYPATH \$recursive\$USERNAME@\$HOST:~/\$1 \$HOME/\$2\n" > ../$TAG/copyfrom && chmod +x ../$TAG/copyfrom
 
 cp ../$TAG/logon ../$TAG/execute
-printf " $3" >> ../$TAG/execute
+printf " $1" >> ../$TAG/execute
